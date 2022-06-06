@@ -1,6 +1,5 @@
 package com.peak.training.account.domain.model;
 
-import com.peak.training.common.domain.valueobject.EmailAddress;
 import com.peak.training.common.exception.AppMessageException;
 import lombok.Builder;
 import lombok.Data;
@@ -16,11 +15,16 @@ public class UserLogin {
     LocalDateTime utimestamp ;
     String password ;
     String authenticationSource ;
-    int auditId ;
+    Integer auditId ;
+    boolean locked ;
+    LocalDateTime lastSuccessLogin ;
+    LocalDateTime lastFaliedLogin ;
+    int faliedLoginAttemp ;
+
 
     @Builder
     public UserLogin(Integer userId, LocalDateTime utimestamp, String password,
-                     String authenticationSource, int auditId ) {
+                     String authenticationSource, Integer auditId ) {
         this.userId = userId ;
         this.utimestamp = utimestamp ;
         this.password = password ;
@@ -29,27 +33,29 @@ public class UserLogin {
     }
 
 
-    public void newUserLogin(Account account, String password, String authenticationSource){
-        this.userId = account.getUserId() ;
+    public UserLogin(int userId, String password, LoginSourceType sourceType){
+        this.userId = userId ;
         this.password = password;
-        this.authenticationSource = authenticationSource ;
+        this.authenticationSource = sourceType.name() ;
         this.utimestamp = LocalDateTime.now() ;
+        locked = false;
+        faliedLoginAttemp = 0 ;
     }
 
-    public void changePassword(String roleList, String oldPassword, String newPassword, int  updateUserId){
+    public void changePassword(String oldPassword, String newPassword, Account updateUserAccount){
         if (this.getAuthenticationSource() != null)
             throw new AppMessageException("userAccount.validation.third_party.password_change") ;
         if (! this.password.equals(oldPassword))
             throw new AppMessageException("userAccount.validation.old_password_mismatch") ;
-        validatePasswordByACL(roleList, updateUserId); ;
+        validatePasswordByACL(updateUserAccount.getRoleList(), updateUserAccount); ;
         password = newPassword ;
         this.utimestamp = LocalDateTime.now();
     }
 
-    private void validatePasswordByACL(String roleList,  int updateUserId){
-        if (updateUserId == this.userId) return ;
-        if (roleList.contains(GroupType.ADMIN.name())) return ;
-        throw new AppMessageException("userAccount.validation.no_password_change_right") ;
+    private void validatePasswordByACL(String roleList,  Account updateUserAccount){
+        if (updateUserAccount.getUserId()== this.userId) return ;
+        if (!hasAdminRight(updateUserAccount))
+        throw new AppMessageException("userAccount.validation.need_admin_right") ;
 
     }
 
@@ -60,5 +66,42 @@ public class UserLogin {
            return true ;
         return false ;
 
+    }
+
+    public void changeAuthenticationSource(String authenticationSource, Account updateUserAccount){
+        if (!hasAdminRight(updateUserAccount))
+            throw new AppMessageException("userAccount.validation.need_admin_right") ;
+        this.authenticationSource = authenticationSource ;
+        this.utimestamp = LocalDateTime.now();
+    }
+
+    public void registerSuccessLogin(){
+        this.lastSuccessLogin = LocalDateTime.now();
+        locked = false ;
+        faliedLoginAttemp = 0 ;
+        this.utimestamp = LocalDateTime.now();
+    }
+
+    public void registerFailedLogin(){
+        this.lastFaliedLogin = LocalDateTime.now();
+        this.faliedLoginAttemp ++ ;
+        if (faliedLoginAttemp > 5)
+            locked = true ;
+        this.utimestamp = LocalDateTime.now();
+    }
+
+    public void UnlockAccount(Account updateUserAccount){
+        if (!locked) return ;
+        if (!hasAdminRight(updateUserAccount))
+            throw new AppMessageException("userAccount.validation.need_admin_right") ;
+
+        locked = false ;
+        this.utimestamp = LocalDateTime.now();
+    }
+
+    private boolean hasAdminRight(Account updateUserAccount){
+        if (updateUserAccount.getRoleList().contains(GroupType.ADMIN.name()))
+            return true ;
+        return false ;
     }
 }

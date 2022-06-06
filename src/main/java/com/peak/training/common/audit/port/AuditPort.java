@@ -6,7 +6,7 @@ import com.peak.training.common.audit.dto.AuditLogDTO;
 public interface AuditPort {
 
     public AuditLogDTO getAuditLogById(int id);
-    public AuditLog persistAuditLog(int auditId, int userId) ;
+    public AuditLog persistAuditLog(Integer auditId, int userId) ;
 
 
 }

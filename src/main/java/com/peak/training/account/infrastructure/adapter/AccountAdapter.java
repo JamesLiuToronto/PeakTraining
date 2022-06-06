@@ -1,7 +1,6 @@
 package com.peak.training.account.infrastructure.adapter;
 
 import com.peak.training.account.domain.model.*;
-import com.peak.training.account.infrastructure.entity.AccessControlEntity;
 import com.peak.training.account.infrastructure.entity.UserAccountEntity;
 import com.peak.training.account.infrastructure.entity.UserGroupEntity;
 import com.peak.training.account.infrastructure.mapper.AccountMapper;
@@ -15,12 +14,8 @@ import com.peak.training.common.exception.AppMessageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class AccountAdapter {
@@ -42,7 +37,6 @@ public class AccountAdapter {
         if (!entity.isPresent())
             throw new AppMessageException("ID_NOT_FOUND") ;
         Account account = AccountMapper.entityToModel(entity.get());
-        account.setMethodACLs(getAclList(entity.get()));
         return account ;
     }
 
@@ -51,7 +45,6 @@ public class AccountAdapter {
         if ((entities == null)||(entities.size()==0))
             throw new AppMessageException("userAccount.validation.invalid.emailAddress") ;
         Account account = AccountMapper.entityToModel(entities.get(0));
-        account.setMethodACLs(getAclList(entities.get(0)));
         return account ;
     }
 
@@ -62,7 +55,7 @@ public class AccountAdapter {
                 account.getEmailAddress().toString(),
                 String.valueOf(account.getPersonInfo().getGenderChar()));
         entity.setAuditId(auditLog.getAuditID());
-        userAccountEntityRepository.save(entity);
+        userAccountEntityRepository.saveAndFlush(entity);
         return AccountMapper.entityToModel(entity);
     }
 
@@ -72,14 +65,14 @@ public class AccountAdapter {
         entity.setUserAccountEntity(account);
         AuditLog auditLog = auditLogService.persistAuditLog(entity.getAuditId(), updateUserId) ;
         entity.setAuditId(auditLog.getAuditID());
-        userGroupEntityRepository.save(entity) ;
+        userGroupEntityRepository.saveAndFlush(entity) ;
     }
 
     public void persistUsergroup(UserGroup model, int updateUserId){
         UserGroupEntity entity = UserGroupMapper.INSTANCE.modelToEntity(model) ;
         AuditLog auditLog = auditLogService.persistAuditLog(entity.getAuditId(), updateUserId) ;
         entity.setAuditId(auditLog.getAuditID());
-        userGroupEntityRepository.save(entity) ;
+        userGroupEntityRepository.saveAndFlush(entity) ;
     }
 
     public UserGroup getUserGroupById(int id){
@@ -87,6 +80,7 @@ public class AccountAdapter {
         return UserGroupMapper.entityToModel(entity) ;
     }
 
+    /*
     public Set<MethodACL> getAclList(int userAccountId ){
         UserAccountEntity account = userAccountEntityRepository.findById(userAccountId).get();
         return getAclList(account) ;
@@ -109,7 +103,7 @@ public class AccountAdapter {
                         .methodcode(x.getMethodCode())
                         .allowed(x.isAllow()).build()));
     }
-
+*/
 
 
 }

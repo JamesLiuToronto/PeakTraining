@@ -36,7 +36,7 @@ public class UserGroupEntity {
     LocalDateTime utimestamp ;
 
     @Column(name="auditId")
-    int auditId ;
+    Integer auditId ;
 
     @Override
     public String toString() {

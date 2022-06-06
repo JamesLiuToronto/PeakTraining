@@ -12,12 +12,12 @@ public class UserGroup extends BaseEntity {
     private Integer userGroupId ;
     private GroupType groupType;
     private boolean active ;
-    private int auditId;
+    private Integer auditId;
 
     @Builder
     public UserGroup(String uuid, LocalDateTime utimestamp,
                      Integer userGroupId, GroupType groupType,
-                     boolean active, int auditId) {
+                     boolean active, Integer auditId) {
         super(uuid,utimestamp) ;
         this.userGroupId = userGroupId;
         this.groupType = groupType;

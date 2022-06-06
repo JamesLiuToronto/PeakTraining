@@ -21,10 +21,10 @@ public class AuditLogService implements AuditPort {
         return AuditLogDTOMapper.INSTANCE.entityToDTO(repository.getById(id));
     }
 
-    public AuditLog persistAuditLog(int auditId, int userId){
+    public AuditLog persistAuditLog(Integer auditId, int userId){
 
         AuditLog entity = null ;
-        if (auditId == 0) {
+        if ((auditId == null)||(auditId == 0)) {
             entity = getNewAuditLog(userId) ;
         }
         else {

@@ -21,8 +21,6 @@ public interface UserDTOMapper {
                 .userID(model.getUserId())
                 .uuid(model.getUuid())
                 .roleList(model.getRoleList())
-                .disallowMethodList(model.getDisAllowMethodList())
-                .allowMethodList(model.getAllowMethodList())
                 .build();
 
 

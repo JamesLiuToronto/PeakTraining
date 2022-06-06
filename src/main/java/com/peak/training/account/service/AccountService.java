@@ -2,20 +2,22 @@ package com.peak.training.account.service;
 
 import com.peak.training.account.domain.model.*;
 import com.peak.training.account.infrastructure.adapter.AccountAdapter;
-import com.peak.training.account.infrastructure.adapter.UserLoginAdapter;
 import com.peak.training.account.port.AccountPort;
+import com.peak.training.account.port.LoginPort;
 import com.peak.training.common.exception.AppMessageException;
 import com.peak.training.common.transactionlog.TransactionLogAdapter;
 import com.peak.training.common.domain.valueobject.EmailAddress;
 import com.peak.training.common.transactionlog.TransactionLogType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
+
+@Slf4j
 @Service
 @Transactional
 public class AccountService implements AccountPort {
@@ -25,7 +27,7 @@ public class AccountService implements AccountPort {
     TransactionLogAdapter logClient ;
 
     @Autowired
-    UserLoginAdapter loginAdapter;
+    LoginPort loginPort;
 
     public Account getAccountById(int id){
         return accountAdapter.getAccountById(id) ;
@@ -37,7 +39,7 @@ public class AccountService implements AccountPort {
         Account request = new Account();
         request.setNewAccount(emailAddress, firstName, lastName, birthDate, gender) ;
         Account account = accountAdapter.persistAccount(request, updateUserId);
-        loginAdapter.persistNewLogin(account.getUserId(), password,
+        loginPort.registerNewLogin(account.getUserId(), password,
                 LoginSourceType.valueOf(loginSourceType), updateUserId);
         groupTypeList.stream().forEach(x->{
             AssignUserGroup(account.getUserId(), x, updateUserId);
@@ -47,7 +49,7 @@ public class AccountService implements AccountPort {
     }
 
     @Override
-    public void changePersonInfo(int id, Person person, int updateUserId) {
+    public Account changePersonInfo(int id, Person person, int updateUserId) {
         adminOrSelfValidator(id, updateUserId);
 
         Account account = accountAdapter.getAccountById(id) ;
@@ -58,10 +60,11 @@ public class AccountService implements AccountPort {
                 getMessage(id, person.toString()),
                 TransactionLogType.STATUS.REQUEST.name(),
                 updateUserId) ;
+        return accountAdapter.getAccountById(id) ;
     }
 
     @Override
-    public void changeEmailAddress(int id, EmailAddress emailAddress, int updateUserId) {
+    public Account changeEmailAddress(int id, EmailAddress emailAddress, int updateUserId) {
         adminOrSelfValidator(id, updateUserId);
 
         Account account = accountAdapter.getAccountById(id) ;
@@ -72,10 +75,13 @@ public class AccountService implements AccountPort {
                 getMessage(id, emailAddress.toString()),
                 TransactionLogType.STATUS.REQUEST.name(),
                 updateUserId) ;
+
+        return accountAdapter.getAccountById(id) ;
+
     }
 
     @Override
-    public void activateAccount(int id, int updateUserId) {
+    public Account activateAccount(int id, int updateUserId) {
         adminValidator(updateUserId);
 
         Account account = accountAdapter.getAccountById(id) ;
@@ -86,10 +92,11 @@ public class AccountService implements AccountPort {
                 Integer.toString(id),
                 TransactionLogType.STATUS.REQUEST.name(),
                 updateUserId) ;
+        return accountAdapter.getAccountById(id) ;
     }
 
     @Override
-    public void disableAccount(int id, int updateUserId) {
+    public Account disableAccount(int id, int updateUserId) {
         adminValidator(updateUserId);
 
         Account account = accountAdapter.getAccountById(id) ;
@@ -100,10 +107,11 @@ public class AccountService implements AccountPort {
                 Integer.toString(id),
                 TransactionLogType.STATUS.REQUEST.name(),
                 updateUserId) ;
+        return accountAdapter.getAccountById(id) ;
     }
 
     @Override
-    public void AssignUserGroup(int userId, GroupType type, int updateUserId) {
+    public Account AssignUserGroup(int userId, GroupType type, int updateUserId) {
         adminValidator(updateUserId);
 
         Account account = accountAdapter.getAccountById(userId) ;
@@ -114,10 +122,11 @@ public class AccountService implements AccountPort {
                 getMessage(userId, type.name()),
                 TransactionLogType.STATUS.REQUEST.name(),
                 updateUserId) ;
+        return accountAdapter.getAccountById(userId) ;
     }
 
     @Override
-    public void disableUserGroup(int id, int updateUserId){
+    public Account disableUserGroup(int id, int updateUserId){
 
         adminValidator(updateUserId);
 
@@ -129,14 +138,9 @@ public class AccountService implements AccountPort {
                 Integer.toString(id),
                 TransactionLogType.STATUS.REQUEST.name(),
                 updateUserId) ;
+        return accountAdapter.getAccountById(id) ;
     }
 
-    @Override
-    public Set<MethodACL> getAclList(int userAccountId ){
-        return accountAdapter.getAclList(userAccountId);
-
-
-    }
 
     private String getMessage(int id, String message){
         return "id=" + Integer.toString(id) + ", " + message ;

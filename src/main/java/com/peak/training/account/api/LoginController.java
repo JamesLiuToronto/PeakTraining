@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("peaktraining/login")
+@RequestMapping("api/login")
 @Tag(name = "Peak Training User login Interface", description = "the API with login ")
 public class LoginController {
 
@@ -37,8 +37,17 @@ public class LoginController {
         return dto ;
     }
 
+    @GetMapping(value = "successful",
+            //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @Operation(summary = "login Success inforamtion", description = "login success ")
+    public String loginSuccess() {
 
-    @AuthorizeUser(pageKey = "LOGIN.CHANGE_PASSWORD")
+        return "Login success" ;
+    }
+
+
+    @AuthorizeUser(requiredRoles = "LOGIN.CHANGE_PASSWORD")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/change-password",
             //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -61,7 +70,7 @@ public class LoginController {
         service.changePassword(userID,oldPassword, newPassword,updateuserID);
     }
 
-    @AuthorizeUser(pageKey = "LOGIN.CHANGE_LOGIN_SOURCE")
+    @AuthorizeUser(requiredRoles = "LOGIN.CHANGE_LOGIN_SOURCE")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/change-login-source",
             //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -78,7 +87,24 @@ public class LoginController {
             @RequestHeader("update-userid") int updateuserID
     ){
 
-        service.persistChangeSourceLogin(userID, loginSourceType, updateuserID);
+        service.changeLoginSource(userID, loginSourceType, updateuserID);
+    }
+
+    @AuthorizeUser(requiredRoles = "LOGIN.UNLOCK_USER")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(value = "/unlock_user",
+            //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @Operation(summary = "login inforamtion", description = "This will generate token String by login ")
+    public void unlockUser(
+            @Parameter(description="userID",
+                    required=true)
+            @RequestParam ("userID") int userID ,
+            @RequestHeader("access_token") String access_token,
+            @RequestHeader("update-userid") int updateuserID
+    ){
+
+        service.unlockUser(userID, updateuserID);
     }
 
 }

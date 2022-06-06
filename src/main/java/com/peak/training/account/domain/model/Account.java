@@ -25,14 +25,13 @@ public class Account extends BaseEntity {
     UserStatus userStatus ;
 
     List<UserGroup> userGroups = new ArrayList<UserGroup>();
-    Set<MethodACL> methodACLs = new HashSet<MethodACL>() ;
 
-    int auditId ;
+    Integer auditId ;
 
     public Account(String uuid, LocalDateTime utimestamp,
                    Integer userId, EmailAddress emailAddress,
                    Person personInfo, UserStatus userStatus,
-                   List<UserGroup> userGroups, int auditId) {
+                   List<UserGroup> userGroups, Integer auditId) {
         super(uuid,utimestamp) ;
         this.userId = userId;
         this.emailAddress = emailAddress;
@@ -135,23 +134,6 @@ public class Account extends BaseEntity {
                 .map(a -> String.valueOf(a.getGroupType().toString()))
                 .collect(Collectors.joining(","));
     }
-
-    public String getAllowMethodList(){
-        return methodACLs.stream()
-                .filter(rec->rec.isAllowed())
-                .map(a -> a.getMethodcode())
-                .collect(Collectors.joining(","));
-
-
-    }
-
-    public String getDisAllowMethodList(){
-       return methodACLs.stream()
-                .filter(rec->!rec.isAllowed())
-                .map(a -> a.getMethodcode())
-                .collect(Collectors.joining(","));
-    }
-
 
 
 }

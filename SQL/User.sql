@@ -18,7 +18,11 @@ CREATE TABLE UserLogin
     password varchar(50) null,
     authenticationSource varchar(20) not null,
     utimestamp datetime DEFAULT current_timestamp(),
-    auditId INT NULL
+    auditId INT NULL,
+    locked boolean NULL
+    lastSuccessLogin datetime null,
+    lastFaliedLogin datetime null,
+    faliedLoginAttemp int NULL
 
 )
 

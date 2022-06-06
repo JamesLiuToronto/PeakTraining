@@ -6,7 +6,6 @@ import com.peak.training.account.infrastructure.adapter.AccountAdapter;
 import com.peak.training.account.infrastructure.adapter.UserLoginAdapter;
 import com.peak.training.account.port.LoginPort;
 import com.peak.training.common.transactionlog.TransactionLogAdapter;
-import com.peak.training.common.transactionlog.TransactionLogClient;
 import com.peak.training.common.exception.AppMessageException;
 import com.peak.training.common.transactionlog.TransactionLogType;
 import org.peak.common.token.dto.UserDTO;
@@ -29,6 +28,14 @@ public class LoginService implements LoginPort {
 
     @Autowired
     JWTUtility jwtUtility ;
+
+
+    @Override
+    public UserLogin registerNewLogin(int userId, String password, LoginSourceType sourceType, int updateUserId) {
+        UserLogin model= new UserLogin(userId, password, sourceType);
+        return loginAdapter.persistUserLogin(model, updateUserId);
+
+    }
 
     @Override
     public LoginDTO login(String emailAddress, String password) {
@@ -66,6 +73,7 @@ public class LoginService implements LoginPort {
 
         UserLogin login = loginAdapter.getUserLoginById(userId) ;
         Account account = accountAdapter.getAccountById(userId);
+        Account updateUserAccount = accountAdapter.getAccountById(updateUserId);
 
         logClient.persistTransactionLog(account.getUuid(),
                 TransactionLogType.TX_LOGIN.CHANGE_PASSWORD.name(),
@@ -74,8 +82,8 @@ public class LoginService implements LoginPort {
                 account.getUserId()) ;
 
 
-        login.changePassword(account.getRoleList(), oldpassword, newPassword, updateUserId);
-        loginAdapter.persistChangePassword(userId, newPassword, updateUserId);
+        login.changePassword(oldpassword, newPassword, updateUserAccount);
+        loginAdapter.persistUserLogin(login, updateUserId);
     }
 
     private String getLoignMessage(String emailAddress, int updateUserId){
@@ -83,15 +91,31 @@ public class LoginService implements LoginPort {
     }
 
     @Override
-    public void persistChangeSourceLogin(int userId, String sourceType, int updateUserId){
+    public void changeLoginSource(int userId, String sourceType, int updateUserId){
 
         logClient.persistTransactionLog(Integer.toString(userId),
-                TransactionLogType.TX_LOGIN.CHANGE_PASSWORD.name(),
+                TransactionLogType.TX_LOGIN.CHANGE_LOGIN_SOURCE.name(),
                 Integer.toString(userId) + ", source type=" + sourceType,
                 TransactionLogType.STATUS.REQUEST.name(),
                 updateUserId) ;
 
-        loginAdapter.persistChangeSourceLogin(userId, LoginSourceType.valueOf(sourceType), updateUserId);
+        UserLogin login = loginAdapter.getUserLoginById(userId) ;
+        Account updateUserAccount = accountAdapter.getAccountById(updateUserId);
+        login.changeAuthenticationSource(sourceType, updateUserAccount);
+        loginAdapter.persistUserLogin(login, updateUserId);
+    }
+
+    @Override
+    public void unlockUser(int userId,  int updateUserId) {
+        logClient.persistTransactionLog(Integer.toString(userId),
+                TransactionLogType.TX_LOGIN.UNLOCK_USER.name(),
+                Integer.toString(userId) ,
+                TransactionLogType.STATUS.REQUEST.name(),
+                updateUserId) ;
+        UserLogin login = loginAdapter.getUserLoginById(userId) ;
+        Account updateUserAccount = accountAdapter.getAccountById(updateUserId);
+        login.UnlockAccount(updateUserAccount);
+        loginAdapter.persistUserLogin(login, updateUserId);
     }
 
 }

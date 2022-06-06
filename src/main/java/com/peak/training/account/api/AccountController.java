@@ -3,7 +3,6 @@ package com.peak.training.account.api;
 
 import com.peak.training.account.domain.model.*;
 import com.peak.training.account.dto.AccountRegisterationDTO;
-import com.peak.training.account.dto.LoginDTO;
 import com.peak.training.account.service.AccountService;
 import com.peak.training.account.validation.GroupTypeRegisterValidator;
 import com.peak.training.common.domain.valueobject.EmailAddress;
@@ -18,40 +17,42 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
+
 @RestController
-@RequestMapping("peaktraining/account")
+@RequestMapping("api/account")
 @Tag(name = "Peak Training User Account Interface", description = "the API with documentation annotations")
 public class AccountController  {
 
     @Autowired
     AccountService service;
 
-    @AuthorizeUser(pageKey = "ACCOUNT.GET_USER")
+    //@AuthorizeUser(requiredRoles = "ACCOUNT.GET_USER")
     @GetMapping(value = "/{user-accountid}",
             //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get UserAccount inforamtion", description = "This will get user account information by userAccountId ")
     public Account getByid(
             @Parameter(description="userId",
                     required=true)
-            @PathVariable("user-accountid") int userAccountId ,
-            @Parameter(description="token", required=true)
-            @RequestHeader("access_token") String access_token,
-            @Parameter(description="update userID", required=true)
-            @RequestHeader("update-userid") int updateUserID){
+            @PathVariable("user-accountid") int userAccountId
+            //@Parameter(description="token", required=true)
+            //@RequestHeader("access_token") String access_token,
+            //@Parameter(description="update userID", required=true)
+            //@RequestHeader("update-userid") int updateUserID
+            ){
 
         return service.getAccountById(userAccountId) ;
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "",
-            //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Register new UserAccount for ",
             description = "This service is for registering student and parent, no authentication required")
-    public void registerNewAccount(@Valid @RequestBody AccountRegisterationDTO dto) {
+    public Account registerNewAccount(@Valid @RequestBody AccountRegisterationDTO dto) {
         GroupTypeRegisterValidator.validateStudentGroupType(dto.getGroupTypeList());
-        registerNewAccount( dto, -1);
+        return registerNewAccount( dto, -1);
 
     }
 
@@ -69,60 +70,58 @@ public class AccountController  {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @AuthorizeUser(pageKey = "ACCOUNT.NEW_USER")
+    @AuthorizeUser(requiredRoles = "ADMIN")
     @PostMapping(value = "/by-admin",
-            //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Register new UserAccount By Admin ",
             description = "This service is for registering All type users, authentication required")
-    public void registerNewAccountByAdmin(@Valid @RequestBody AccountRegisterationDTO dto,
-                                          @Parameter(description="token", required=true)
-                                          @RequestHeader("access_token") String access_token,
+    public Account registerNewAccountByAdmin(@Valid @RequestBody AccountRegisterationDTO dto,
                                           @Parameter(description="update userID", required=true)
                                               @RequestHeader("update-userid") int updateUserId) {
         GroupTypeRegisterValidator.validatenNullGroupType(dto.getGroupTypeList());
-        registerNewAccount( dto, updateUserId);
+        return registerNewAccount( dto, updateUserId);
 
     }
 
-    @AuthorizeUser(pageKey = "ACCOUNT.ACTIVATE_USER")
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{user-accountid}/activate",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            //consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Activate account", description = "This operation will user information")
-    public void activate(
+    public Account activate(
             @Parameter(description="User Account ID", required=true)
             @PathVariable("user-accountid") int userAccountId ,
-            @Parameter(description="token", required=true)
-            @RequestHeader("access_token") String access_token,
             @Parameter(description="update userID", required=true)
             @RequestHeader("update-userid") int updateUserId){
-        service.activateAccount(userAccountId, updateUserId);
+        return service.activateAccount(userAccountId, updateUserId);
     }
 
-    @AuthorizeUser(pageKey = "ACCOUNT.DEACTIVATE_USER")
+    @ResponseStatus(HttpStatus.OK)
+    //@AuthorizeUser(requiredRoles = "ACCOUNT.DEACTIVATE_USER")
     @PutMapping(value = "/{user-accountid}/deactivate",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+           //consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "deactive account", description = "This operation will user information")
-    public void deactivate(
+    public Account deactivate(
             @Parameter(description="User Account ID", required=true)
             @PathVariable("user-accountid") int userAccountId ,
-            @Parameter(description="token", required=true)
-            @RequestHeader("access_token") String access_token,
+           // @Parameter(description="token", required=true)
+            //@RequestHeader("access_token") String access_token,
             @Parameter(description="update userID", required=true)
             @RequestHeader("update-userid") int updateUserId) {
 
-        service.activateAccount(userAccountId, updateUserId);
+        return service.activateAccount(userAccountId, updateUserId);
+
     }
 
 
-    @AuthorizeUser(pageKey = "ACCOUNT.UPDATE_USERINFO")
+    @AuthorizeUser(requiredRoles = "SELF,ADMIN")
     @PutMapping(value = "/{user-accountid}/personinfo",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Update User Information", description = "This operation will user information")
-    public void updateUserInfo(
+    public Account updateUserInfo(
             @Parameter(description="User Account ID", required=true)
             @PathVariable("user-accountid") int userAccountId ,
             @Parameter(description="Person information",
@@ -133,15 +132,15 @@ public class AccountController  {
             @Parameter(description="update userID", required=true)
             @RequestHeader("update-userid") int updateUserId) {
 
-        service.changePersonInfo(userAccountId, person, updateUserId);
+        return service.changePersonInfo(userAccountId, person, updateUserId);
     }
 
-    @AuthorizeUser(pageKey = "ACCOUNT.UPDATE_EMAILADDRESS")
+    @AuthorizeUser(requiredRoles = "SELF,ADMIN")
     @PutMapping(value = "/{user-accountid}/emailaddress",
-            //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Update User Information", description = "This operation will user information")
-    public void updateEmailAddress(
+    public Account updateEmailAddress(
             @Parameter(description="User Account ID", required=true)
             @PathVariable("user-accountid") int userAccountId ,
             @Parameter(description="Email information",
@@ -152,15 +151,15 @@ public class AccountController  {
             @Parameter(description="update userID", required=true)
             @RequestHeader("update-userid") int updateUserId ) {
 
-        service.changeEmailAddress(userAccountId, emailAddress, updateUserId);
+        return service.changeEmailAddress(userAccountId, emailAddress, updateUserId);
     }
 
-    @AuthorizeUser(pageKey = "ACCOUNT.ASSIGN_USERGROUP")
+    @AuthorizeUser(requiredRoles = "ADMIN")
     @PostMapping(value = "/{user-accountid}/usergroup",
             //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Assign group type", description = "This operation will assign group type to user")
-    public void assignUsergroup(
+    public Account assignUsergroup(
             @Parameter(description="User Account ID", required=true)
             @PathVariable("user-accountid") int userAccountId ,
             @RequestParam("group-type") String groupType ,
@@ -169,11 +168,11 @@ public class AccountController  {
             @Parameter(description="update userID", required=true)
             @RequestHeader("update-userid") int updateUserId) {
 
-        service.AssignUserGroup(userAccountId, GroupType.valueOf(groupType), updateUserId);
+        return service.AssignUserGroup(userAccountId, GroupType.valueOf(groupType), updateUserId);
     }
 
 /*
-    @AuthorizeUser(pageKey = "ACCOUNT.GET_ACL_LIST")
+    @AuthorizeUser(requiredRoles = "ACCOUNT.GET_ACL_LIST")
     //@ExceptionHandler(AppNoAccessException.class)
     @GetMapping(value = "/{group-code}/groupcode",
             //consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},

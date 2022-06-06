@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @Component
@@ -25,43 +26,41 @@ public class UserLoginAdapter {
 
 
     public UserLogin getUserLoginById(int userId){
-        UserLoginEntity entity = userLoginEntityRepository.getById(userId);
-        if (entity== null)
+        Optional<UserLoginEntity> optional = userLoginEntityRepository.findById(userId) ;
+        if (!optional.isPresent())
             throw new AppMessageException("ID_NOT_FOUND") ;
-        UserLogin model = UserLoginMapper.INSTANCE.entityToModel(entity);
+        UserLogin model = UserLoginMapper.INSTANCE.entityToModel(optional.get());
         return model ;
     }
 
-    public void persistNewLogin(int userId, String password, LoginSourceType sourceType, int updateUserId){
+    public UserLogin persistUserLogin(UserLogin model, int updateUserId){
         AuditLog auditLog = auditLogService.persistAuditLog(0, updateUserId) ;
-        UserLoginEntity entity = UserLoginEntity.builder()
-                .userId(userId)
-                .authenticationSource(sourceType.name())
-                .utimestamp(LocalDateTime.now())
-                .password(password)
-                .auditId(auditLog.getAuditID())
-                .build();
-        userLoginEntityRepository.save(entity) ;
+        model.setAuditId(auditLog.getAuditID());
+        UserLoginEntity entity = UserLoginMapper.INSTANCE.modelToEntity(model);
+        userLoginEntityRepository.saveAndFlush(entity);
+        return UserLoginMapper.INSTANCE.entityToModel(entity) ;
     }
 
-    public void persistChangePassword(int userId, String password, int updateUserId){
-        UserLoginEntity entity = userLoginEntityRepository.getById(userId);
+
+    /*
+    public void persistChangePassword(UserLogin login, int updateUserId){
+        UserLoginEntity entity = userLoginEntityRepository.getById(login.getUserId());
         AuditLog auditLog = auditLogService.persistAuditLog(entity.getAuditId(), updateUserId) ;
-        entity.setPassword(password);
+        entity.setPassword(login.getPassword());
         entity.setUtimestamp(LocalDateTime.now());
         userLoginEntityRepository.save(entity) ;
     }
 
-    public void persistChangeSourceLogin(int userId, LoginSourceType sourceType, int updateUserId){
-        UserLoginEntity entity = userLoginEntityRepository.getById(userId);
+    public void persistChangeSourceLogin(UserLogin login, int updateUserId){
+        UserLoginEntity entity = userLoginEntityRepository.getById(login.getUserId());
         AuditLog auditLog = auditLogService.persistAuditLog(entity.getAuditId(), updateUserId) ;
-        entity.setAuthenticationSource(sourceType.name());
+        entity.setAuthenticationSource(login.getAuthenticationSource());
         entity.setUtimestamp(LocalDateTime.now());
         userLoginEntityRepository.save(entity) ;
     }
 
 
-
+*/
 
 
 

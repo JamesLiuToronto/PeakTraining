@@ -50,9 +50,9 @@ public class UserAccountEntity {
     LocalDateTime utimestamp ;
 
     @Column(name="auditId")
-    int auditId ;
+    Integer auditId ;
 
-    @OneToMany(mappedBy = "userAccountEntity", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userAccountEntity", fetch = FetchType.EAGER)
     //@OrderBy("lineNum")
     private List<UserGroupEntity> userGroups = new ArrayList<>();
 

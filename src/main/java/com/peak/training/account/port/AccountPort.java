@@ -13,12 +13,11 @@ public interface AccountPort {
                               String firstName, String lastName,
                               LocalDate birthDate, String gender, int updateUserId,
                               List<GroupType> groupTypeList);
-    public void changePersonInfo (int id, Person person, int updateUserId) ;
-    public void changeEmailAddress(int id, EmailAddress emailAddress, int updateUserId) ;
-    public void activateAccount(int id, int updateUserId);
-    public void disableAccount(int id, int updateUserId) ;
-    public void AssignUserGroup(int userGroupId, GroupType type, int updateUserId);
-    public void disableUserGroup(int id, int updateUserId);
-    public Set<MethodACL> getAclList(int userAccountId ) ;
+    public Account changePersonInfo (int id, Person person, int updateUserId) ;
+    public Account changeEmailAddress(int id, EmailAddress emailAddress, int updateUserId) ;
+    public Account activateAccount(int id, int updateUserId);
+    public Account disableAccount(int id, int updateUserId) ;
+    public Account AssignUserGroup(int userGroupId, GroupType type, int updateUserId);
+    public Account disableUserGroup(int id, int updateUserId);
 
 }

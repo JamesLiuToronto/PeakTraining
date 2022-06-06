@@ -8,7 +8,7 @@ public class TransactionLogType {
     }
 
     public enum TX_LOGIN {
-        LOGIN, CHANGE_PASSWORD
+        LOGIN, CHANGE_PASSWORD, UNLOCK_USER, CHANGE_LOGIN_SOURCE
     }
 
     public enum STATUS{

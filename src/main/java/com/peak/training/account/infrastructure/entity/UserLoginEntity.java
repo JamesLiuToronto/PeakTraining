@@ -29,10 +29,33 @@ public class UserLoginEntity {
     @Column(name="password")
     String password ;
 
-    @Column(name="authenticationSource")
+    @Column(name="authenticationsource")
     String authenticationSource ;
 
     @Column(name="auditId")
-    int auditId ;
+    Integer auditId ;
 
+    @Column(name="locked")
+    boolean locked ;
+
+    @Column(name="lastsuccesslogin")
+    LocalDateTime lastSuccessLogin ;
+
+    @Column(name="lastfaliedlogin")
+    LocalDateTime lastFaliedLogin ;
+
+    @Column(name="faliedloginattemp")
+    int faliedLoginAttemp ;
+
+    @Override
+    public String toString() {
+        return "UserLoginEntity{" +
+                "userId=" + userId +
+                ", password='" + password + '\'' +
+                ", authenticationSource='" + authenticationSource + '\'' +
+                ", auditId=" + auditId +
+                ", locked=" + locked +
+                ", faliedLoginAttemp=" + faliedLoginAttemp +
+                '}';
+    }
 }
