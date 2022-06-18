@@ -1,5 +1,6 @@
 package com.peak.training.account.infrastructure.entity;
 
+import com.peak.training.common.infractructure.InfraEntityBase;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @Table(name="Useraccount", schema="peaktraining")
 @NamedQuery(name = "UserAccountEntity.findByemailAddress", query = "select u from UserAccountEntity u where u.emailAddress = ?1")
 @NamedQuery(name = "UserAccountEntity.findByUuid", query = "select u from UserAccountEntity u where u.uuid = ?1")
-public class UserAccountEntity {
+public class UserAccountEntity extends InfraEntityBase {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -46,15 +47,10 @@ public class UserAccountEntity {
     @Column(name="statuscode")
     String statusCode ;
 
-    @Column(name="utimestamp")
-    LocalDateTime utimestamp ;
-
-    @Column(name="auditId")
-    Integer auditId ;
-
-    @OneToMany(mappedBy = "userAccountEntity", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userAccountEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     //@OrderBy("lineNum")
     private List<UserGroupEntity> userGroups = new ArrayList<>();
+
 
     @Override
     public String toString() {
@@ -69,4 +65,6 @@ public class UserAccountEntity {
                 ", statusCode='" + statusCode + '\'' +
                 '}';
     }
+
+
 }

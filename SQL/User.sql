@@ -8,21 +8,25 @@ CREATE TABLE UserAccount
     birthDate Date DEFAULT NULL,
     sex char(1) DEFAULT NULL,
     statusCode varchar(20) NOT NULL,
-    utimestamp datetime DEFAULT current_timestamp(),
-    auditId INT NULL
+    createDate datetime DEFAULT current_timestamp(),
+    updateDate datetime DEFAULT current_timestamp(),
+    createUserId int not null ,
+    updateUserId int not null
     )
 
 CREATE TABLE UserLogin
 (
     userId INT NOT NULL PRIMARY KEY,
-    password varchar(50) null,
+    password varchar(500) null,
     authenticationSource varchar(20) not null,
-    utimestamp datetime DEFAULT current_timestamp(),
-    auditId INT NULL,
-    locked boolean NULL
+    locked boolean NULL,
     lastSuccessLogin datetime null,
     lastFaliedLogin datetime null,
-    faliedLoginAttemp int NULL
+    faliedLoginAttemp int NULL,
+    createDate datetime DEFAULT current_timestamp(),
+    updateDate datetime DEFAULT current_timestamp(),
+    createUserId int not null ,
+    updateUserId int not null
 
 )
 
@@ -33,8 +37,10 @@ CREATE TABLE UserGroup
     groupCode varchar(10) NOT NULL,
     userId int NOT NULL ,
     active bit not null,
-    utimestamp datetime DEFAULT current_timestamp(),
-    auditId INT NULL,
+    createDate datetime DEFAULT current_timestamp(),
+    updateDate datetime DEFAULT current_timestamp(),
+    createUserId int not null ,
+    updateUserId int not null ,
 
     CONSTRAINT UserGroup_user FOREIGN KEY (userId)
         REFERENCES UserAccount(userId)
@@ -53,20 +59,23 @@ CREATE TABLE AccessControl
     index (methodCode)
 )
 
-insert into AccessControl values (1, 'ADMIN', 'NEW_USER', 1, null, CURDATE());
-insert into AccessControl values (2, 'ADMIN', 'UPDATE_USER', 1, null, CURDATE());
+insert into userAccount values (-1, '01010101', 'admin@yahoo.com', 'admin', 'admin', '2000-01-01', 'M', 'ACTIVE',
+now(), now(), -1, -1);
 
-insert into UserAccount values ( 1, UUID(), 'jamesliu_8@yahoo.com', 'James', 'Liu', '1970-01-01', 'M', 'ACTIVE', CURDATE() );
+insert into userAccount values (1, '01010102', 'jamesliu_8@yahoo.com', 'james', 'admin', '2000-01-01', 'M', 'ACTIVE',
+                                now(), now(), -1, -1);
 
-insert into UserGroup values (1, UUID(), 'ADMIN', 1, 1, CURDATE())
-insert into UserGroup values (2, UUID(), 'USER', 1, 1, CURDATE())
-insert into UserGroup values (3, UUID(), 'STUDENT', 1, 1, CURDATE())
-insert into UserGroup values (4, UUID(), 'TEACHER', 1, 1, CURDATE())
-insert into UserGroup values (5, UUID(), 'ASST', 1, 1, CURDATE())
+insert into userlogin values (-1, 'admin', 'NULL', null, null, null, 0,  now(), now(), -1, -1);
+insert into userlogin values (1, 'james', 'NULL', null, null, null, 0, now(), now(), -1, -1);
 
-insert into userlogin values (1, 'james', 'NULL', now(), null )
-insert into userlogin values (2, 'test1', 'GOOGLE', now(), null )
-insert into userlogin values (3, 'test2', 'FACEBOOK', now(), null )
+
+
+insert into UserGroup values (1, UUID(), 'ADMIN', 1, 1, now(), now(), -1, -1);
+insert into UserGroup values (2, UUID(), 'USER', 1, 1, now(), now(), -1, -1);
+insert into UserGroup values (3, UUID(), 'STUDENT', 1, 1, now(), now(), -1, -1);
+insert into UserGroup values (4, UUID(), 'TEACHER', 1, 1, now(), now(), -1, -1);
+insert into UserGroup values (5, UUID(), 'ASST', 1, 1, now(), now(), -1, -1);
+
 
 CREATE TABLE TransactionLog
 (

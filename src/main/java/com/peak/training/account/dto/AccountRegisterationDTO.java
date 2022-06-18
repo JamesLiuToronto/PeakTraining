@@ -4,7 +4,7 @@ import com.peak.training.account.validation.LoginSourceTypeValidation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.peak.common.myvalidation.validation.EmailValidation;
+import com.peak.training.common.annotation.validation.validation.EmailValidation;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;

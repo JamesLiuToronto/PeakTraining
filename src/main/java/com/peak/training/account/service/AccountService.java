@@ -5,10 +5,9 @@ import com.peak.training.account.infrastructure.adapter.AccountAdapter;
 import com.peak.training.account.port.AccountPort;
 import com.peak.training.account.port.LoginPort;
 import com.peak.training.common.exception.AppMessageException;
-import com.peak.training.common.transactionlog.TransactionLogAdapter;
 import com.peak.training.common.domain.valueobject.EmailAddress;
-import com.peak.training.common.transactionlog.TransactionLogType;
 import lombok.extern.slf4j.Slf4j;
+import com.peak.training.common.annotation.log.LogMethodData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +22,7 @@ import java.util.List;
 public class AccountService implements AccountPort {
     @Autowired
     AccountAdapter accountAdapter;
-    @Autowired
-    TransactionLogAdapter logClient ;
+
 
     @Autowired
     LoginPort loginPort;
@@ -33,21 +31,33 @@ public class AccountService implements AccountPort {
         return accountAdapter.getAccountById(id) ;
     }
 
+    @LogMethodData
     public Account newAccount(String emailAddress, String password, String loginSourceType, String firstName, String lastName,
                               LocalDate birthDate, String gender, int updateUserId, List<GroupType> groupTypeList){
 
         Account request = new Account();
-        request.setNewAccount(emailAddress, firstName, lastName, birthDate, gender) ;
+        request.setNewAccount(emailAddress, firstName, lastName, birthDate, gender, groupTypeList) ;
         Account account = accountAdapter.persistAccount(request, updateUserId);
         loginPort.registerNewLogin(account.getUserId(), password,
                 LoginSourceType.valueOf(loginSourceType), updateUserId);
-        groupTypeList.stream().forEach(x->{
+       /* groupTypeList.stream().forEach(x->{
             AssignUserGroup(account.getUserId(), x, updateUserId);
-        });
+        });*/
         return accountAdapter.getAccountById(account.getUserId()) ;
 
     }
 
+    private Account registerNewUserGroup(int userId, GroupType type, int updateUserId) {
+        adminValidator(updateUserId);
+
+        Account account = accountAdapter.getAccountById(userId) ;
+        UserGroup model = account.assignUserGroup(type) ;
+        accountAdapter.persistNewUsergroup(userId, model, updateUserId);
+
+        return accountAdapter.getAccountById(userId) ;
+    }
+
+    @LogMethodData
     @Override
     public Account changePersonInfo(int id, Person person, int updateUserId) {
         adminOrSelfValidator(id, updateUserId);
@@ -55,14 +65,10 @@ public class AccountService implements AccountPort {
         Account account = accountAdapter.getAccountById(id) ;
         account.changePersonInfo(person);
         accountAdapter.persistAccount(account, updateUserId) ;
-        logClient.persistTransactionLog(account.getUuid(),
-                TransactionLogType.TX_ACCOUNT.UPDATE_PERSON.name(),
-                getMessage(id, person.toString()),
-                TransactionLogType.STATUS.REQUEST.name(),
-                updateUserId) ;
         return accountAdapter.getAccountById(id) ;
     }
 
+    @LogMethodData
     @Override
     public Account changeEmailAddress(int id, EmailAddress emailAddress, int updateUserId) {
         adminOrSelfValidator(id, updateUserId);
@@ -70,31 +76,23 @@ public class AccountService implements AccountPort {
         Account account = accountAdapter.getAccountById(id) ;
         account.changeEmailAddress(emailAddress);
         accountAdapter.persistAccount(account, updateUserId) ;
-        logClient.persistTransactionLog(account.getUuid(),
-                TransactionLogType.TX_ACCOUNT.CHANGE_EMAIL.name(),
-                getMessage(id, emailAddress.toString()),
-                TransactionLogType.STATUS.REQUEST.name(),
-                updateUserId) ;
 
         return accountAdapter.getAccountById(id) ;
 
     }
 
+    @LogMethodData
     @Override
-    public Account activateAccount(int id, int updateUserId) {
-        adminValidator(updateUserId);
+    public Account activateAccount(int userId, int updateUserId) {
+        adminOrSelfValidator(userId,updateUserId);
 
-        Account account = accountAdapter.getAccountById(id) ;
+        Account account = accountAdapter.getAccountById(userId) ;
         account.activateAccount();
         accountAdapter.persistAccount(account, updateUserId) ;
-        logClient.persistTransactionLog(account.getUuid(),
-                TransactionLogType.TX_ACCOUNT.ACTIVATE_USER.name(),
-                Integer.toString(id),
-                TransactionLogType.STATUS.REQUEST.name(),
-                updateUserId) ;
-        return accountAdapter.getAccountById(id) ;
+        return accountAdapter.getAccountById(userId) ;
     }
 
+    @LogMethodData
     @Override
     public Account disableAccount(int id, int updateUserId) {
         adminValidator(updateUserId);
@@ -102,14 +100,10 @@ public class AccountService implements AccountPort {
         Account account = accountAdapter.getAccountById(id) ;
         account.disAbleAccount();
         accountAdapter.persistAccount(account, updateUserId) ;
-        logClient.persistTransactionLog(account.getUuid(),
-                TransactionLogType.TX_ACCOUNT.DEACTIVATE_USER.name(),
-                Integer.toString(id),
-                TransactionLogType.STATUS.REQUEST.name(),
-                updateUserId) ;
         return accountAdapter.getAccountById(id) ;
     }
 
+    @LogMethodData
     @Override
     public Account AssignUserGroup(int userId, GroupType type, int updateUserId) {
         adminValidator(updateUserId);
@@ -117,14 +111,12 @@ public class AccountService implements AccountPort {
         Account account = accountAdapter.getAccountById(userId) ;
         UserGroup model = account.assignUserGroup(type) ;
         accountAdapter.persistNewUsergroup(userId, model, updateUserId);
-        logClient.persistTransactionLog(model.getUuid(),
-                TransactionLogType.TX_ACCOUNT.ASSIGN_USERGROUP.name(),
-                getMessage(userId, type.name()),
-                TransactionLogType.STATUS.REQUEST.name(),
-                updateUserId) ;
+
         return accountAdapter.getAccountById(userId) ;
     }
 
+
+    @LogMethodData
     @Override
     public Account disableUserGroup(int id, int updateUserId){
 
@@ -133,11 +125,6 @@ public class AccountService implements AccountPort {
         UserGroup model = accountAdapter.getUserGroupById(id) ;
         model.disableGroup();
         accountAdapter.persistUsergroup(model, updateUserId);
-        logClient.persistTransactionLog(model.getUuid(),
-                TransactionLogType.TX_ACCOUNT.DISABLE_USERGROUP.name(),
-                Integer.toString(id),
-                TransactionLogType.STATUS.REQUEST.name(),
-                updateUserId) ;
         return accountAdapter.getAccountById(id) ;
     }
 

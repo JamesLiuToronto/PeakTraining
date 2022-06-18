@@ -7,14 +7,14 @@ import com.peak.training.transactionlog.repository.TransactionLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 @ComponentScan({"com.peak.training.common.audit"})
 public class TransactionLogService {
     @Autowired
@@ -34,6 +34,7 @@ public class TransactionLogService {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void persistTransactionLog(String uuid, String typeCode, String message,
                                       String statusCode, int userId){
         TransactionLog entity = TransactionLog.builder()

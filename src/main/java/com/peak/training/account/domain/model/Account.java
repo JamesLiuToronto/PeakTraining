@@ -26,36 +26,36 @@ public class Account extends BaseEntity {
 
     List<UserGroup> userGroups = new ArrayList<UserGroup>();
 
-    Integer auditId ;
 
-    public Account(String uuid, LocalDateTime utimestamp,
+    public Account(String uuid,
                    Integer userId, EmailAddress emailAddress,
                    Person personInfo, UserStatus userStatus,
-                   List<UserGroup> userGroups, Integer auditId) {
-        super(uuid,utimestamp) ;
+                   List<UserGroup> userGroups) {
+        super(uuid) ;
         this.userId = userId;
         this.emailAddress = emailAddress;
         this.personInfo = personInfo;
         this.userStatus = userStatus;
         this.userGroups = userGroups;
-        this.auditId = auditId ;
+
     }
 
-    public void setNewAccount(String emailAddress, String firstName, String lastName, LocalDate birthDate, String gender){
+    public void setNewAccount(String emailAddress, String firstName,
+                              String lastName, LocalDate birthDate,
+                              String gender, List<GroupType> groupTypeList){
         this.setUuid(UUID.randomUUID().toString());
         this.personInfo =  new Person(
                 firstName, lastName, birthDate,
                 Gender.TYPE.getTypeByChar(gender.charAt(0)));
 
         this.emailAddress = new EmailAddress(emailAddress) ;
-        this.setUtimestamp(LocalDateTime.now());
         this.userStatus = UserStatus.PENDING ;
+        groupTypeList.stream().forEach(x-> assignUserGroup(x));
 
     }
 
     public void changePersonInfo(Person person){
         this.personInfo = person ;
-        this.setUtimestamp(LocalDateTime.now());
     }
 
     public void changeEmailAddress(EmailAddress emailAddress){
@@ -97,13 +97,11 @@ public class Account extends BaseEntity {
     public void activateAccount(){
 
         this.userStatus = UserStatus.ACTIVE ;
-        this.setUtimestamp(LocalDateTime.now());
     }
 
     public void disAbleAccount(){
 
         this.userStatus = UserStatus.DISABLE ;
-        this.setUtimestamp(LocalDateTime.now());
     }
 
 

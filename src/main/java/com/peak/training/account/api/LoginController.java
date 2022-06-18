@@ -6,7 +6,7 @@ import com.peak.training.account.service.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.peak.common.token.AuthorizeUser;
+import com.peak.training.common.annotation.token.AuthorizeUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

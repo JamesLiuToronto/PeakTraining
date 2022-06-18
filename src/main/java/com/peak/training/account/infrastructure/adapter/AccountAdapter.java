@@ -9,7 +9,6 @@ import com.peak.training.account.infrastructure.repository.AccessControlReposito
 import com.peak.training.account.infrastructure.repository.UserAccountEntityRepository;
 import com.peak.training.account.infrastructure.repository.UserGroupEntityRepository;
 import com.peak.training.common.audit.domain.AuditLog;
-import com.peak.training.common.audit.service.AuditLogService;
 import com.peak.training.common.exception.AppMessageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,10 +27,6 @@ public class AccountAdapter {
     @Autowired
     AccessControlRepository accessControlRepository ;
 
-    @Autowired
-    AuditLogService auditLogService ;
-
-
     public Account getAccountById(int id){
         Optional<UserAccountEntity> entity = userAccountEntityRepository.findById(id) ;
         if (!entity.isPresent())
@@ -49,12 +44,14 @@ public class AccountAdapter {
     }
 
     public Account persistAccount(Account account, int updateUserId){
-        AuditLog auditLog = auditLogService.persistAuditLog(account.getAuditId(), updateUserId) ;
         UserAccountEntity entity = AccountMapper.INSTANCE.modelToEntity(account,
                 account.getPersonInfo(),
                 account.getEmailAddress().toString(),
                 String.valueOf(account.getPersonInfo().getGenderChar()));
-        entity.setAuditId(auditLog.getAuditID());
+        entity.setAudit(updateUserId);
+        for (UserGroupEntity rec: entity.getUserGroups()){
+            rec.setUserAccountEntity(entity);
+        }
         userAccountEntityRepository.saveAndFlush(entity);
         return AccountMapper.entityToModel(entity);
     }
@@ -63,15 +60,15 @@ public class AccountAdapter {
         UserAccountEntity account = userAccountEntityRepository.findById(userAccountId).get();
         UserGroupEntity entity = UserGroupMapper.INSTANCE.modelToEntity(model) ;
         entity.setUserAccountEntity(account);
-        AuditLog auditLog = auditLogService.persistAuditLog(entity.getAuditId(), updateUserId) ;
-        entity.setAuditId(auditLog.getAuditID());
-        userGroupEntityRepository.saveAndFlush(entity) ;
+        entity.setAudit(updateUserId);
+        //userGroupEntityRepository.saveAndFlush(entity) ;
+        account.getUserGroups().add(entity) ;
+        userAccountEntityRepository.saveAndFlush(account) ;
     }
 
     public void persistUsergroup(UserGroup model, int updateUserId){
         UserGroupEntity entity = UserGroupMapper.INSTANCE.modelToEntity(model) ;
-        AuditLog auditLog = auditLogService.persistAuditLog(entity.getAuditId(), updateUserId) ;
-        entity.setAuditId(auditLog.getAuditID());
+        entity.setAudit(updateUserId);
         userGroupEntityRepository.saveAndFlush(entity) ;
     }
 

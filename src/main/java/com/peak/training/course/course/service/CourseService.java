@@ -1,7 +1,5 @@
 package com.peak.training.course.course.service;
 
-import com.peak.training.common.transactionlog.TransactionLogClient;
-import com.peak.training.common.transactionlog.TransactionLogType;
 import com.peak.training.course.course.entity.Course;
 import com.peak.training.course.course.port.CoursePort;
 import com.peak.training.course.course.repository.CourseRepository;
@@ -15,8 +13,6 @@ public class CourseService implements CoursePort {
     @Autowired
     CourseRepository courseRepository ;
 
-    @Autowired
-    TransactionLogClient logClient ;
 
     @Override
     public Course createNewCourse(String categoryCode, String title, String courseTypeCode,
@@ -33,11 +29,6 @@ public class CourseService implements CoursePort {
                 .build() ;
         courseRepository.save(course) ;
 
-        logClient.persistTransactionLog(course.getUuid(),
-                TransactionLogType.TX_ACCOUNT.NEW_USER.name(),
-                course.toString(),
-                TransactionLogType.STATUS.REQUEST.name(),
-                updateUserId) ;
         return course ;
     }
 

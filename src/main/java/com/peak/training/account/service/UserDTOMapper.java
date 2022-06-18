@@ -4,7 +4,7 @@ import com.peak.training.account.domain.model.Account;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import org.peak.common.token.dto.UserDTO;
+import com.peak.training.common.annotation.token.dto.UserDTO;
 
 @Mapper
 public interface UserDTOMapper {

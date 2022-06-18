@@ -1,5 +1,6 @@
 package com.peak.training.account.infrastructure.entity;
 
+import com.peak.training.common.infractructure.InfraEntityBase;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,23 +18,17 @@ import java.util.List;
 @Entity
 @Table(name="UserLogin", schema="peaktraining")
 //@NamedQuery(name = "UserLoginEntity.findByemailAddress", query = "select u from UserLoginEntity u where u.emailAddress = ?1")
-public class UserLoginEntity {
+public class UserLoginEntity extends InfraEntityBase {
 
     @Id
     @Column(name="userid")
     int userId ;
-
-    @Column(name="utimestamp")
-    LocalDateTime utimestamp ;
 
     @Column(name="password")
     String password ;
 
     @Column(name="authenticationsource")
     String authenticationSource ;
-
-    @Column(name="auditId")
-    Integer auditId ;
 
     @Column(name="locked")
     boolean locked ;
@@ -47,13 +42,13 @@ public class UserLoginEntity {
     @Column(name="faliedloginattemp")
     int faliedLoginAttemp ;
 
+
     @Override
     public String toString() {
         return "UserLoginEntity{" +
                 "userId=" + userId +
                 ", password='" + password + '\'' +
                 ", authenticationSource='" + authenticationSource + '\'' +
-                ", auditId=" + auditId +
                 ", locked=" + locked +
                 ", faliedLoginAttemp=" + faliedLoginAttemp +
                 '}';

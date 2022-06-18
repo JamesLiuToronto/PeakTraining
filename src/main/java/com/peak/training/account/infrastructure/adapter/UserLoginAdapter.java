@@ -21,9 +21,6 @@ public class UserLoginAdapter {
     @Autowired
     UserLoginEntityRepository userLoginEntityRepository;
 
-    @Autowired
-    AuditLogService auditLogService ;
-
 
     public UserLogin getUserLoginById(int userId){
         Optional<UserLoginEntity> optional = userLoginEntityRepository.findById(userId) ;
@@ -34,9 +31,8 @@ public class UserLoginAdapter {
     }
 
     public UserLogin persistUserLogin(UserLogin model, int updateUserId){
-        AuditLog auditLog = auditLogService.persistAuditLog(0, updateUserId) ;
-        model.setAuditId(auditLog.getAuditID());
         UserLoginEntity entity = UserLoginMapper.INSTANCE.modelToEntity(model);
+        entity.setAudit(updateUserId);
         userLoginEntityRepository.saveAndFlush(entity);
         return UserLoginMapper.INSTANCE.entityToModel(entity) ;
     }

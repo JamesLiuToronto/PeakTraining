@@ -1,6 +1,6 @@
 package com.peak.training.account.security;
 
-import org.peak.common.token.model.CurrentUser;
+import com.peak.training.common.annotation.token.model.CurrentUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

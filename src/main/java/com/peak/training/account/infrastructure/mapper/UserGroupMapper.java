@@ -21,11 +21,9 @@ public interface UserGroupMapper {
 
         return UserGroup.builder()
                 .uuid(entity.getUuid())
-                .utimestamp(entity.getUtimestamp())
                 .groupType(GroupType.valueOf(entity.getGroupCode()))
                 .active(entity.isActive())
                 .userGroupId(entity.getUserGroupId())
-                .auditId(entity.getAuditId())
                 .build();
     }
 

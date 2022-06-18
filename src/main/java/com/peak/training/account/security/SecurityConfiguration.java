@@ -3,11 +3,13 @@ package com.peak.training.account.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -20,35 +22,33 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     UserDetailsService userDetailsService;
 
 
-    @Override
+    /*@Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
         auth.userDetailsService(userDetailsService);
-
-
-    }
+    }*/
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+        http
+                //.csrf()
+                //.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 
-                .and()
+               //.and()
+           // http
+                    .csrf().disable()
                 .authorizeRequests()
-
-                //admin endpont can access only ADMIN ROLE
-               .antMatchers("/admin").hasRole("ADMIN")
-
                 //user endpoint can access ADMIN and USER ROLES
-                .antMatchers("/api/*").permitAll()
+                //.antMatchers("/api/*", "/peaktraining/*").permitAll()
+                //.antMatchers("/registeration/**").permitAll()
+                .antMatchers("/api/**", "/peaktraining/**").authenticated()
 
                 //can access all users
                 //.antMatchers("/").permitAll()
-                .anyRequest()
-                .authenticated()
-                .and().formLogin()
-                .defaultSuccessUrl("/api/login/successful")
+                .anyRequest().permitAll()
+
+                .and().formLogin().permitAll()
+                .defaultSuccessUrl("/registeration/successful")
                 .and()
                 .logout(logout->
                         logout.clearAuthentication(true)
@@ -58,12 +58,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Bean
+    /*@Bean
     public PasswordEncoder getPasswordEncoder() {
         return NoOpPasswordEncoder.getInstance();
+    }*/
+
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authProvider());
+    }
 
 }

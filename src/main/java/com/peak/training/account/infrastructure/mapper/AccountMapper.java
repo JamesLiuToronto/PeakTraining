@@ -32,11 +32,9 @@ public interface AccountMapper {
         List<UserGroup> list = new ArrayList<>();
         entity.getUserGroups().stream().forEach(x-> list.add(UserGroupMapper.entityToModel(x)));
         return new Account(entity.getUuid(),
-                entity.getUtimestamp(),
                 entity.getUserId(),
                 new EmailAddress(entity.getEmailAddress()),
-                person, UserStatus.valueOf(entity.getStatusCode()),
-                list, entity.getAuditId()) ;
+                person, UserStatus.valueOf(entity.getStatusCode()), list) ;
 
     }
 
@@ -46,6 +44,7 @@ public interface AccountMapper {
     @Mapping(source = "person.birthDate", target = "birthDate")
     @Mapping(source = "sex", target = "sex")
     @Mapping(source = "model.userStatus", target = "statusCode")
+    @Mapping(source = "model.userGroups", target = "userGroups")
     public UserAccountEntity modelToEntity(final Account model, Person person,
                                     String emailAddress, String sex);
 }

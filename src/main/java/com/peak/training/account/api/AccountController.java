@@ -5,12 +5,12 @@ import com.peak.training.account.domain.model.*;
 import com.peak.training.account.dto.AccountRegisterationDTO;
 import com.peak.training.account.service.AccountService;
 import com.peak.training.account.validation.GroupTypeRegisterValidator;
+import com.peak.training.common.annotation.token.AuthorizeUser;
 import com.peak.training.common.domain.valueobject.EmailAddress;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.peak.common.token.AuthorizeUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,18 +42,6 @@ public class AccountController  {
             ){
 
         return service.getAccountById(userAccountId) ;
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping(value = "",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Register new UserAccount for ",
-            description = "This service is for registering student and parent, no authentication required")
-    public Account registerNewAccount(@Valid @RequestBody AccountRegisterationDTO dto) {
-        GroupTypeRegisterValidator.validateStudentGroupType(dto.getGroupTypeList());
-        return registerNewAccount( dto, -1);
-
     }
 
     private Account registerNewAccount(AccountRegisterationDTO dto, int updateuserId) {
@@ -127,8 +115,6 @@ public class AccountController  {
             @Parameter(description="Person information",
                     required=true, schema=@Schema(implementation = Person.class))
             @RequestBody Person person ,
-            @Parameter(description="token", required=true)
-            @RequestHeader("access_token") String access_token,
             @Parameter(description="update userID", required=true)
             @RequestHeader("update-userid") int updateUserId) {
 
@@ -146,8 +132,6 @@ public class AccountController  {
             @Parameter(description="Email information",
                     required=true, schema=@Schema(implementation = EmailAddress.class))
             @RequestBody EmailAddress emailAddress ,
-            @Parameter(description="token", required=true)
-            @RequestHeader("access_token") String access_token,
             @Parameter(description="update userID", required=true)
             @RequestHeader("update-userid") int updateUserId ) {
 
@@ -163,8 +147,6 @@ public class AccountController  {
             @Parameter(description="User Account ID", required=true)
             @PathVariable("user-accountid") int userAccountId ,
             @RequestParam("group-type") String groupType ,
-            @Parameter(description="token", required=true)
-            @RequestHeader("access_token") String access_token,
             @Parameter(description="update userID", required=true)
             @RequestHeader("update-userid") int updateUserId) {
 

@@ -6,7 +6,7 @@ import com.peak.training.account.domain.model.UserStatus;
 import com.peak.training.account.infrastructure.adapter.AccountAdapter;
 import com.peak.training.account.infrastructure.adapter.UserLoginAdapter;
 import com.peak.training.common.exception.AppMessageException;
-import org.peak.common.token.model.CurrentUser;
+import com.peak.training.common.annotation.token.model.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,6 +27,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
     UserLoginAdapter loginAdapter ;
+
 
 
     @Override

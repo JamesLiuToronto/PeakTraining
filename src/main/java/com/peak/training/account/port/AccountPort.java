@@ -13,11 +13,11 @@ public interface AccountPort {
                               String firstName, String lastName,
                               LocalDate birthDate, String gender, int updateUserId,
                               List<GroupType> groupTypeList);
-    public Account changePersonInfo (int id, Person person, int updateUserId) ;
-    public Account changeEmailAddress(int id, EmailAddress emailAddress, int updateUserId) ;
-    public Account activateAccount(int id, int updateUserId);
-    public Account disableAccount(int id, int updateUserId) ;
+    public Account changePersonInfo (int userId, Person person, int updateUserId) ;
+    public Account changeEmailAddress(int userId, EmailAddress emailAddress, int updateUserId) ;
+    public Account activateAccount(int userId, int updateUserId);
+    public Account disableAccount(int userId, int updateUserId) ;
     public Account AssignUserGroup(int userGroupId, GroupType type, int updateUserId);
-    public Account disableUserGroup(int id, int updateUserId);
+    public Account disableUserGroup(int userGroupId, int updateUserId);
 
 }

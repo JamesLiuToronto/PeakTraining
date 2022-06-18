@@ -12,10 +12,8 @@ import java.time.LocalDateTime;
 public class UserLogin {
 
     Integer userId ;
-    LocalDateTime utimestamp ;
     String password ;
     String authenticationSource ;
-    Integer auditId ;
     boolean locked ;
     LocalDateTime lastSuccessLogin ;
     LocalDateTime lastFaliedLogin ;
@@ -23,13 +21,11 @@ public class UserLogin {
 
 
     @Builder
-    public UserLogin(Integer userId, LocalDateTime utimestamp, String password,
-                     String authenticationSource, Integer auditId ) {
+    public UserLogin(Integer userId, String password,
+                     String authenticationSource) {
         this.userId = userId ;
-        this.utimestamp = utimestamp ;
         this.password = password ;
         this.authenticationSource = authenticationSource ;
-        this.auditId = auditId ;
     }
 
 
@@ -37,7 +33,6 @@ public class UserLogin {
         this.userId = userId ;
         this.password = password;
         this.authenticationSource = sourceType.name() ;
-        this.utimestamp = LocalDateTime.now() ;
         locked = false;
         faliedLoginAttemp = 0 ;
     }
@@ -49,7 +44,7 @@ public class UserLogin {
             throw new AppMessageException("userAccount.validation.old_password_mismatch") ;
         validatePasswordByACL(updateUserAccount.getRoleList(), updateUserAccount); ;
         password = newPassword ;
-        this.utimestamp = LocalDateTime.now();
+
     }
 
     private void validatePasswordByACL(String roleList,  Account updateUserAccount){
@@ -72,14 +67,12 @@ public class UserLogin {
         if (!hasAdminRight(updateUserAccount))
             throw new AppMessageException("userAccount.validation.need_admin_right") ;
         this.authenticationSource = authenticationSource ;
-        this.utimestamp = LocalDateTime.now();
     }
 
     public void registerSuccessLogin(){
         this.lastSuccessLogin = LocalDateTime.now();
         locked = false ;
         faliedLoginAttemp = 0 ;
-        this.utimestamp = LocalDateTime.now();
     }
 
     public void registerFailedLogin(){
@@ -87,7 +80,6 @@ public class UserLogin {
         this.faliedLoginAttemp ++ ;
         if (faliedLoginAttemp > 5)
             locked = true ;
-        this.utimestamp = LocalDateTime.now();
     }
 
     public void UnlockAccount(Account updateUserAccount){
@@ -96,7 +88,6 @@ public class UserLogin {
             throw new AppMessageException("userAccount.validation.need_admin_right") ;
 
         locked = false ;
-        this.utimestamp = LocalDateTime.now();
     }
 
     private boolean hasAdminRight(Account updateUserAccount){

@@ -1,5 +1,6 @@
 package com.peak.training.account.infrastructure.entity;
 
+import com.peak.training.common.infractructure.InfraEntityBase;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name="Usergroup", schema="peaktraining")
-public class UserGroupEntity {
+public class UserGroupEntity extends InfraEntityBase {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -32,11 +33,7 @@ public class UserGroupEntity {
     @JoinColumn(name = "userid")
     private UserAccountEntity userAccountEntity;
 
-    @Column(name="utimestamp")
-    LocalDateTime utimestamp ;
 
-    @Column(name="auditId")
-    Integer auditId ;
 
     @Override
     public String toString() {

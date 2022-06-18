@@ -1,6 +1,6 @@
 package com.peak.training.exceptionhandle;
 
-import org.peak.common.myvalidation.errormessage.ErrorMessage;
+import com.peak.training.common.annotation.validation.errormessage.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

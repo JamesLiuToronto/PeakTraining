@@ -1,4 +1,4 @@
-package com.peak.training.common.transactionlog;
+package com.peak.training.common.annotation.log.logclient;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
