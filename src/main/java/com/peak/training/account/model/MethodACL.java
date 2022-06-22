@@ -1,4 +1,4 @@
-package com.peak.training.account.domain.model;
+package com.peak.training.account.model;
 
 import com.peak.training.common.domain.base.ValueObject;
 import lombok.Builder;

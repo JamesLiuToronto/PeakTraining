@@ -1,8 +1,10 @@
 package com.peak.training.account.api;
 
 
-import com.peak.training.account.domain.model.*;
 import com.peak.training.account.dto.AccountRegisterationDTO;
+import com.peak.training.account.model.Account;
+import com.peak.training.account.model.GroupType;
+import com.peak.training.account.model.Person;
 import com.peak.training.account.service.AccountService;
 import com.peak.training.account.validation.GroupTypeRegisterValidator;
 import com.peak.training.common.annotation.token.AuthorizeUser;

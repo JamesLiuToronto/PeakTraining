@@ -1,6 +1,6 @@
 package com.peak.training.account.infrastructure.mapper;
 
-import com.peak.training.account.domain.model.UserLogin;
+import com.peak.training.account.model.UserLogin;
 import com.peak.training.account.infrastructure.entity.UserLoginEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;

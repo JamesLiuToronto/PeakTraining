@@ -1,7 +1,7 @@
 package com.peak.training.account.service;
 
-import com.peak.training.account.domain.model.*;
 import com.peak.training.account.infrastructure.adapter.AccountAdapter;
+import com.peak.training.account.model.*;
 import com.peak.training.account.port.AccountPort;
 import com.peak.training.account.port.LoginPort;
 import com.peak.training.common.exception.AppMessageException;

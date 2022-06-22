@@ -1,6 +1,5 @@
 package com.peak.training.account.infrastructure.adapter;
 
-import com.peak.training.account.domain.model.*;
 import com.peak.training.account.infrastructure.entity.UserAccountEntity;
 import com.peak.training.account.infrastructure.entity.UserGroupEntity;
 import com.peak.training.account.infrastructure.mapper.AccountMapper;
@@ -8,7 +7,8 @@ import com.peak.training.account.infrastructure.mapper.UserGroupMapper;
 import com.peak.training.account.infrastructure.repository.AccessControlRepository;
 import com.peak.training.account.infrastructure.repository.UserAccountEntityRepository;
 import com.peak.training.account.infrastructure.repository.UserGroupEntityRepository;
-import com.peak.training.common.audit.domain.AuditLog;
+import com.peak.training.account.model.Account;
+import com.peak.training.account.model.UserGroup;
 import com.peak.training.common.exception.AppMessageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

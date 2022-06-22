@@ -1,9 +1,11 @@
 package com.peak.training.account.service;
 
-import com.peak.training.account.domain.model.*;
 import com.peak.training.account.dto.LoginDTO;
 import com.peak.training.account.infrastructure.adapter.AccountAdapter;
 import com.peak.training.account.infrastructure.adapter.UserLoginAdapter;
+import com.peak.training.account.model.Account;
+import com.peak.training.account.model.LoginSourceType;
+import com.peak.training.account.model.UserLogin;
 import com.peak.training.account.port.LoginPort;
 import com.peak.training.common.exception.AppMessageException;
 import com.peak.training.common.annotation.log.LogMethodData;

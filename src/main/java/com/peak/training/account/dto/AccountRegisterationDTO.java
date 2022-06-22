@@ -1,5 +1,5 @@
 package com.peak.training.account.dto;
-import com.peak.training.account.domain.model.GroupType;
+import com.peak.training.account.model.GroupType;
 import com.peak.training.account.validation.LoginSourceTypeValidation;
 import lombok.AllArgsConstructor;
 import lombok.Data;

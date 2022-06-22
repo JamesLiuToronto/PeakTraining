@@ -1,4 +1,4 @@
-package com.peak.training.account.domain.model;
+package com.peak.training.account.model;
 
 import com.peak.training.common.domain.base.BaseEntity;
 import com.peak.training.common.domain.valueobject.EmailAddress;
@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 

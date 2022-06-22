@@ -1,10 +1,9 @@
-package com.peak.training.account.domain.model;
+package com.peak.training.account.model;
 
 import com.peak.training.common.domain.base.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter

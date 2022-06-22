@@ -26,7 +26,7 @@ public class TokenUtility implements Serializable {
     private String secret;
 
     @Value("${jwt.duration}")
-    private int duration;
+    private int last;
 
     private Jws<Claims> parseJwt(String jwtString) {
 
@@ -56,6 +56,7 @@ public class TokenUtility implements Serializable {
     public String createJwtSignedHMAC(TokenDTO token) {
         Key hmacKey = new SecretKeySpec(Base64.getDecoder().decode(secret), SignatureAlgorithm.HS256.getJcaName());
 
+        log.info("duration=" + last);
         Instant now = Instant.now();
         String jwtToken = Jwts.builder()
                 .claim("type", token.getType())
@@ -64,10 +65,10 @@ public class TokenUtility implements Serializable {
                 .setSubject("tokenDTO")
                 .setId(UUID.randomUUID().toString())
                 .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plus(duration, ChronoUnit.MINUTES)))
+                .setExpiration(Date.from(now.plus(last, ChronoUnit.MINUTES)))
                 .signWith(hmacKey)
                 .compact();
-        log.info("duration=" + duration);
+
         return jwtToken;
     }
 

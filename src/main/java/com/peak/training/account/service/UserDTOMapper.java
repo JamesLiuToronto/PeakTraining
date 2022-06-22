@@ -1,6 +1,6 @@
 package com.peak.training.account.service;
 
-import com.peak.training.account.domain.model.Account;
+import com.peak.training.account.model.Account;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;

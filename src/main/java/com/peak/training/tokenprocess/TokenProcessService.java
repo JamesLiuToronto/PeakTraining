@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 
 @Service
-@Transactional
-public class TokenProcessService  {
+public class TokenProcessService implements TokenProcessPort {
     @Autowired
     AccountProcess accountProcess;
 
@@ -41,6 +39,12 @@ public class TokenProcessService  {
     public String getActivateAccountToken(int userId) {
             TokenDTO dto = accountProcess.getActivateAccountToken(userId) ;
             return tokenUtility.createJwtSignedHMAC(dto) ;
+    }
+
+    @Override
+    public String setFamilyMember(int askedForUserId, int requestedByUserId) {
+        TokenDTO dto = accountProcess.getFamiltSetupToken(askedForUserId, requestedByUserId);
+        return tokenUtility.createJwtSignedHMAC(dto) ;
     }
 
     public String getEncrptedMessage(String message) {

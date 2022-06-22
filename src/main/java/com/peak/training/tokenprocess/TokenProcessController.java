@@ -1,19 +1,12 @@
 package com.peak.training.tokenprocess;
 
 
-import com.peak.training.account.domain.model.Account;
-import com.peak.training.account.dto.AccountRegisterationDTO;
-import com.peak.training.account.service.AccountService;
-import com.peak.training.account.validation.GroupTypeRegisterValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 
 @RestController
@@ -22,7 +15,7 @@ import javax.validation.Valid;
 public class TokenProcessController {
 
     @Autowired
-    TokenProcessService service;
+    TokenProcessPort service;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{token}")

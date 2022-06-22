@@ -1,8 +1,8 @@
 package com.peak.training.account.security;
 
-import com.peak.training.account.domain.model.Account;
-import com.peak.training.account.domain.model.UserLogin;
-import com.peak.training.account.domain.model.UserStatus;
+import com.peak.training.account.model.Account;
+import com.peak.training.account.model.UserLogin;
+import com.peak.training.account.model.UserStatus;
 import com.peak.training.account.infrastructure.adapter.AccountAdapter;
 import com.peak.training.account.infrastructure.adapter.UserLoginAdapter;
 import com.peak.training.common.exception.AppMessageException;

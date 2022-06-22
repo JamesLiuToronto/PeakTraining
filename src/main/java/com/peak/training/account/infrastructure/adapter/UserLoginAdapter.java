@@ -1,17 +1,13 @@
 package com.peak.training.account.infrastructure.adapter;
 
-import com.peak.training.account.domain.model.LoginSourceType;
-import com.peak.training.account.domain.model.UserLogin;
+import com.peak.training.account.model.UserLogin;
 import com.peak.training.account.infrastructure.entity.UserLoginEntity;
 import com.peak.training.account.infrastructure.mapper.UserLoginMapper;
 import com.peak.training.account.infrastructure.repository.UserLoginEntityRepository;
-import com.peak.training.common.audit.domain.AuditLog;
-import com.peak.training.common.audit.service.AuditLogService;
 import com.peak.training.common.exception.AppMessageException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 

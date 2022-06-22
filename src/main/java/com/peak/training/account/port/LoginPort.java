@@ -1,9 +1,9 @@
 package com.peak.training.account.port;
 
 
-import com.peak.training.account.domain.model.Account;
-import com.peak.training.account.domain.model.LoginSourceType;
-import com.peak.training.account.domain.model.UserLogin;
+import com.peak.training.account.model.Account;
+import com.peak.training.account.model.LoginSourceType;
+import com.peak.training.account.model.UserLogin;
 import com.peak.training.account.dto.LoginDTO;
 
 public interface LoginPort {

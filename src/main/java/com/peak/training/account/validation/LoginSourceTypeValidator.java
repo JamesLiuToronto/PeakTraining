@@ -1,11 +1,9 @@
 package com.peak.training.account.validation;
 
-import com.peak.training.account.domain.model.LoginSourceType;
+import com.peak.training.account.model.LoginSourceType;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Arrays;
-import java.util.List;
 
 public class LoginSourceTypeValidator implements ConstraintValidator<LoginSourceTypeValidation, String>
 {

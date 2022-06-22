@@ -1,7 +1,7 @@
 package com.peak.training.account.infrastructure.mapper;
 
-import com.peak.training.account.domain.model.GroupType;
-import com.peak.training.account.domain.model.UserGroup;
+import com.peak.training.account.model.GroupType;
+import com.peak.training.account.model.UserGroup;
 import com.peak.training.account.infrastructure.entity.UserGroupEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

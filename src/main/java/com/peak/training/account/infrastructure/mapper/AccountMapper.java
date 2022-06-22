@@ -1,9 +1,9 @@
 package com.peak.training.account.infrastructure.mapper;
 
-import com.peak.training.account.domain.model.Account;
-import com.peak.training.account.domain.model.Person;
-import com.peak.training.account.domain.model.UserGroup;
-import com.peak.training.account.domain.model.UserStatus;
+import com.peak.training.account.model.Account;
+import com.peak.training.account.model.Person;
+import com.peak.training.account.model.UserGroup;
+import com.peak.training.account.model.UserStatus;
 import com.peak.training.account.infrastructure.entity.UserAccountEntity;
 import com.peak.training.common.domain.valueobject.EmailAddress;
 import com.peak.training.common.enumtype.Gender;

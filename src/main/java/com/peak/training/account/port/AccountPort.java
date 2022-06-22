@@ -1,11 +1,12 @@
 package com.peak.training.account.port;
 
-import com.peak.training.account.domain.model.*;
+import com.peak.training.account.model.Account;
+import com.peak.training.account.model.GroupType;
+import com.peak.training.account.model.Person;
 import com.peak.training.common.domain.valueobject.EmailAddress;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 public interface AccountPort {
     public Account getAccountById(int id) ;

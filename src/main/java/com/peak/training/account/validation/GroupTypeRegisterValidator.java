@@ -1,6 +1,6 @@
 package com.peak.training.account.validation;
 
-import com.peak.training.account.domain.model.GroupType;
+import com.peak.training.account.model.GroupType;
 import com.peak.training.common.exception.AppMessageException;
 
 import java.util.List;
